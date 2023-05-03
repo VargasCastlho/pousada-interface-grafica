@@ -5,11 +5,13 @@
  */
 package pousada.dominio;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -39,5 +41,8 @@ public class Quarto {
     @Column(name="valor_diaria")
     private Double valorDiaria;
     private String observacoes;
+    
+    @OneToMany(mappedBy = "quarto")
+    private List<Reserva> reservas;
     
 }

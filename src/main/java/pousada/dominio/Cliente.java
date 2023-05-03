@@ -9,6 +9,7 @@ package pousada.dominio;
 import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import pousada.dominio.enums.GeneroEnum;
@@ -44,6 +45,7 @@ public class Cliente implements Serializable {
     @NotNull
     private GeneroEnum genero;
     
-    
+    @OneToMany(mappedBy = "cliente")
+    private List<Reserva> reservas;
     
 }
