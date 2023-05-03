@@ -6,6 +6,7 @@
 package pousada.dominio;
 
 
+import com.sun.istack.NotNull;
 import java.io.Serializable;
 import java.time.LocalDate;
 import javax.persistence.*;
@@ -20,12 +21,13 @@ import pousada.dominio.enums.GeneroEnum;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Cliente implements Serializable {
     
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY)
-    @Column(name="codigo_cliente")
-    private int codigoCliente;
+    @Column(name="id_cliente")
+    private int idCliente;
     private String nome;
     private String celular; 
     private String profissao;
@@ -39,6 +41,7 @@ public class Cliente implements Serializable {
     private String cidade;
     private String uf;
     private String pais;
+    @NotNull
     private GeneroEnum genero;
     
     

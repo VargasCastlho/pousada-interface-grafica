@@ -13,5 +13,10 @@
     <property name="hibernate.show_sql">true</property>
     <property name="hibernate.format_sql">true</property>
     <mapping class="pousada.dominio.Cliente"></mapping>
+    <mapping class="pousada.dominio.Quarto"></mapping>
+    <mapping class="pousada.dominio.ConheceuPousada"></mapping>
+    <mapping class="pousada.dominio.MeioTransporte"></mapping>
+    <mapping class="pousada.dominio.MotivoViagem"></mapping>
+    <mapping class="pousada.dominio.Reserva"></mapping>
   </session-factory>
 </hibernate-configuration>

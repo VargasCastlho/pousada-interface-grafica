@@ -24,20 +24,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quarto {
+public class MeioTransporte {
     
     @Id
     @GeneratedValue ( strategy = GenerationType.IDENTITY)
-    @Column(name="numero_quarto")
-    private int numeroQuarto;
-    @Column(name="numero_camas")
-    private int numeroCamas;
-    @Column(name="numero_armarios")
-    private int numeroArmarios;
-    @Column(name="numero_frigobares")
-    private int numeroFrigobares;
-    @Column(name="valor_diaria")
-    private Double valorDiaria;
-    private String observacoes;
+    @Column(name="id_meio_transporte")
+    private int idMeioTransporte;
     
+    private String descricao;
 }
