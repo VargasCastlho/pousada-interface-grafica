@@ -415,7 +415,7 @@ private String getDateTime() {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-
+        
     }//GEN-LAST:event_formWindowOpened
 
     private void cbMvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbMvActionPerformed

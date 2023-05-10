@@ -28,8 +28,7 @@ public class GerenciadorInterfaceGrafica {
             instancia = new GerenciadorInterfaceGrafica();
         return instancia;
     }
-    
-    private GerenciadorDominio gerenciadorDominio;
+   
     private CadastrarCliente cadastrarCliente = null;
     private ConsultarCliente consultarCliente = null;
     private Faturamento faturamento = null;
@@ -62,7 +61,6 @@ public class GerenciadorInterfaceGrafica {
         altMt = new AltMt();
         altMv = new AltMv();
         cadastrarReserva = new CadastrarReserva();
-        gerenciadorDominio = new GerenciadorDominio();
     }
     
 

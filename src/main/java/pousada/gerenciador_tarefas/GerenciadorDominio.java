@@ -5,14 +5,33 @@
  */
 package pousada.gerenciador_tarefas;
 
+import java.util.List;
 import pousada.dao.ConexaoHibernate;
+import pousada.dao.GenericDAO;
+import pousada.dominio.MeioTransporte;
 
 /**
  *
  * @author 2022222760011
  */
 public class GerenciadorDominio {
-    public GerenciadorDominio(){
-        ConexaoHibernate.getSessionFactory();
+    
+    
+    private static GerenciadorDominio instancia = null;
+    public static GerenciadorDominio getInstancia() {
+        if (instancia == null)
+            instancia = new GerenciadorDominio();
+        return instancia;
     }
+    
+    GenericDAO genDAO = null;
+    
+    private GerenciadorDominio(){
+        genDAO = new GenericDAO();
+    }
+    
+    public List<MeioTransporte> listarMeioTransporte(){
+        return genDAO.listar(MeioTransporte.class);
+    }
+    
 }
