@@ -4,6 +4,11 @@
  */
 package pousada.gerenciador_tarefas;
 
+import java.util.List;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JOptionPane;
+import org.hibernate.HibernateException;
 import pousada.interface_grafica.JanelaPrincipal;
 import pousada.interface_grafica.cliente.CadastrarCliente;
 import pousada.interface_grafica.cliente.ConsultarCliente;
@@ -29,6 +34,7 @@ public class GerenciadorInterfaceGrafica {
         return instancia;
     }
    
+    private GerenciadorDominio gerDominio = null;
     private CadastrarCliente cadastrarCliente = null;
     private ConsultarCliente consultarCliente = null;
     private Faturamento faturamento = null;
@@ -46,6 +52,7 @@ public class GerenciadorInterfaceGrafica {
     private JanelaPrincipal janelaPrincipal = null;
         
     private GerenciadorInterfaceGrafica(){
+        gerDominio = GerenciadorDominio.getInstancia();
         janelaPrincipal = new JanelaPrincipal();
         cadastrarCliente = new CadastrarCliente();
         consultarReserva = new ConsultarReserva();
@@ -60,7 +67,7 @@ public class GerenciadorInterfaceGrafica {
         altCp = new AltCp();
         altMt = new AltMt();
         altMv = new AltMv();
-        cadastrarReserva = new CadastrarReserva();
+        cadastrarReserva = new CadastrarReserva(this);
     }
     
 
@@ -123,6 +130,18 @@ public class GerenciadorInterfaceGrafica {
 
     public void getJanelaPrincipal() {
         janelaPrincipal.setVisible(true);
+    }
+    
+    public void carregarCombo(JComboBox combo, Class classe) {
+        
+        try {
+            List lista = gerDominio.listar(classe);
+            combo.setModel( new DefaultComboBoxModel( lista.toArray() )  );
+                                   
+        } catch (HibernateException  ex) {
+            JOptionPane.showMessageDialog(janelaPrincipal, "Erro ao carregar cidades. " + ex.getMessage() );          
+        } 
+        
     }
     
     

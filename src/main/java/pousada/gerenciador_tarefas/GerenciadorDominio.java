@@ -6,9 +6,10 @@
 package pousada.gerenciador_tarefas;
 
 import java.util.List;
-import pousada.dao.ConexaoHibernate;
+import org.hibernate.HibernateException;
 import pousada.dao.GenericDAO;
 import pousada.dominio.MeioTransporte;
+import pousada.dominio.MotivoViagem;
 
 /**
  *
@@ -30,8 +31,14 @@ public class GerenciadorDominio {
         genDAO = new GenericDAO();
     }
     
-    public List<MeioTransporte> listarMeioTransporte(){
-        return genDAO.listar(MeioTransporte.class);
+    public List listar(Class classe) throws HibernateException {        
+        return genDAO.listar(classe);        
+    }
+    
+    public int inserirMotivoViagem(String descricao){
+        MotivoViagem mV = MotivoViagem.builder().descricao(descricao).build();
+        genDAO.inserir(mV);
+        return mV.getIdMotivoViagem();
     }
     
 }

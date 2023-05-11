@@ -9,20 +9,11 @@ package pousada.interface_grafica.reserva;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+import pousada.dominio.MotivoViagem;
+import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
 
 /**
@@ -33,12 +24,14 @@ public class CadastrarReserva extends javax.swing.JFrame {
 
     /** Creates new form CadastrarReserva */
     String id;
-    public CadastrarReserva() {
+    GerenciadorInterfaceGrafica gerIG;
+    public CadastrarReserva(GerenciadorInterfaceGrafica gerIG) {
         initComponents();
         this.setLocationRelativeTo(null);
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        this.gerIG = gerIG;
     }
 
 private String getDateTime() {
@@ -93,6 +86,11 @@ private String getDateTime() {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cadastrar Reserva");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -415,7 +413,7 @@ private String getDateTime() {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        
+    
     }//GEN-LAST:event_formWindowOpened
 
     private void cbMvActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbMvActionPerformed
@@ -471,6 +469,10 @@ private String getDateTime() {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtDataCheckInActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        gerIG.carregarCombo(cbMt, MotivoViagem.class);
+    }//GEN-LAST:event_formComponentShown
+
     /**
      * @param args the command line arguments
      */
@@ -501,7 +503,7 @@ private String getDateTime() {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new CadastrarReserva().setVisible(true);
+                new CadastrarReserva(GerenciadorInterfaceGrafica.getInstancia()).setVisible(true);
             }
         });
     }
