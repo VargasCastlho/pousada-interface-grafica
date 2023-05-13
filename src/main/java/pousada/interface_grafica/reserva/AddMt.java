@@ -89,10 +89,11 @@ public class AddMt extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
     try {
-        int id = gerDOM.inserirMotivoViagem(txtMt.getText());
-        JOptionPane.showMessageDialog(this, "Motivo Viagem " + id + " inserido com sucesso.", "Inserir Motivo Viagem", JOptionPane.INFORMATION_MESSAGE  );
+        int id = gerDOM.inserirMeioTransporte(txtMt.getText());
+        JOptionPane.showMessageDialog(this, "Meio Transporte " + id + " inserido com sucesso.", "Inserir Meio Transporte", JOptionPane.INFORMATION_MESSAGE  );
+        txtMt.setText("");
     } catch(Exception e){
-        JOptionPane.showMessageDialog(this, e, "ERRO Cliente", JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(this, e, "ERRO Meio Transporte", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_jButton1ActionPerformed
 

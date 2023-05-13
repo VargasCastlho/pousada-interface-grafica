@@ -11,6 +11,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
+import pousada.dominio.ConheceuPousada;
+import pousada.dominio.MeioTransporte;
+import pousada.dominio.MotivoViagem;
+import pousada.dominio.Quarto;
 import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
 /**
@@ -19,16 +23,17 @@ import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
  */
 public class ConsultarReserva extends javax.swing.JFrame {
     private Integer compara = 1;
-    GerenciadorInterfaceGrafica gerenciadorInterfaceGrafica;
     /**
      * Creates new form ConsultarReserva
      */
-    public ConsultarReserva() {
+    GerenciadorInterfaceGrafica gerIG;
+    public ConsultarReserva(GerenciadorInterfaceGrafica gerIG) {
         initComponents();
         this.setLocationRelativeTo(null);
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        this.gerIG = gerIG;
     }
 
     /**
@@ -88,6 +93,11 @@ public class ConsultarReserva extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Consultar Reserva");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -545,33 +555,27 @@ public class ConsultarReserva extends javax.swing.JFrame {
     }//GEN-LAST:event_formWindowOpened
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
-        gerenciadorInterfaceGrafica.getAddCp();
+        gerIG.getAddCp();
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
-        gerenciadorInterfaceGrafica.getAltCp();
+        gerIG.getAltCp();
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
-        gerenciadorInterfaceGrafica.getAddMt();
+        gerIG.getAddMt();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
-        gerenciadorInterfaceGrafica.getAltMt();
+        gerIG.getAltMt();
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
-        gerenciadorInterfaceGrafica.getAddMv();
+        gerIG.getAddMv();
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
-        gerenciadorInterfaceGrafica.getAltMv();
+        gerIG.getAltMv();
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
@@ -582,6 +586,13 @@ public class ConsultarReserva extends javax.swing.JFrame {
         lTexto.setText("Digite a data de check-in: ");
         compara=2;
     }//GEN-LAST:event_jRadioButton1ActionPerformed
+
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        gerIG.carregarCombo(cbMt, MeioTransporte.class);
+        gerIG.carregarCombo(cbMv, MotivoViagem.class);
+        gerIG.carregarCombo(cbCp, ConheceuPousada.class);
+        gerIG.carregarCombo(cbNq, Quarto.class);
+    }//GEN-LAST:event_formComponentShown
 
     /**
      * @param args the command line arguments
@@ -613,7 +624,7 @@ public class ConsultarReserva extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ConsultarReserva().setVisible(true);
+                new ConsultarReserva(GerenciadorInterfaceGrafica.getInstancia()).setVisible(true);
             }
         });
     }

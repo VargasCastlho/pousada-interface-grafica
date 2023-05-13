@@ -90,12 +90,13 @@ public class AddMv extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-//    try {
-//        int id = gerDOM.inserirMotivoViagem(descricao);
-//        JOptionPane.showMessageDialog(this, "Cliente " + id + "inserido com sucesso.", "Inserir Cliente", JOptionPane.INFORMATION_MESSAGE  );
-//    } catch(Exception e){
-//        JOptionPane.showMessageDialog(this, e, "ERRO Cliente", JOptionPane.ERROR_MESSAGE);
-//    }
+    try {
+        int id = gerDOM.inserirMotivoViagem(txtMv.getText());
+        JOptionPane.showMessageDialog(this, "Motivo Viagem " + id + "inserido com sucesso.", "Inserir Motivo Viagem", JOptionPane.INFORMATION_MESSAGE  );
+        txtMv.setText("");
+    } catch(Exception e){
+        JOptionPane.showMessageDialog(this, e, "ERRO Motivo Viagem", JOptionPane.ERROR_MESSAGE);
+    }
     
     }//GEN-LAST:event_jButton1ActionPerformed
 

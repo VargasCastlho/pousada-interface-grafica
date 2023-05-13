@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.Builder;
 
 /**
  *
@@ -26,10 +27,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Quarto {
     
     @Id
-    @GeneratedValue ( strategy = GenerationType.IDENTITY)
     @Column(name="numero_quarto")
     private int numeroQuarto;
     @Column(name="numero_camas")
@@ -45,4 +46,8 @@ public class Quarto {
     @OneToMany(mappedBy = "quarto")
     private List<Reserva> reservas;
     
+    @Override
+    public String toString() {
+        return Integer.toString(numeroQuarto);
+    }
 }

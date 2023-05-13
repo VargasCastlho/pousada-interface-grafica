@@ -8,11 +8,8 @@ package pousada.interface_grafica.reserva;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import javax.swing.JOptionPane;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 
 /**
  *
@@ -23,12 +20,14 @@ public class AddCp extends javax.swing.JFrame {
     /**
      * Creates new form AddMv3
      */
+    GerenciadorDominio gerDOM = null;
     public AddCp() {
         initComponents();
         setLocationRelativeTo(null);
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        gerDOM = GerenciadorDominio.getInstancia();
     }
 
     /**
@@ -88,7 +87,13 @@ public class AddCp extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-
+    try {
+        int id = gerDOM.inserirConheceuPousada(txtCp.getText());
+        JOptionPane.showMessageDialog(this, "Motivo Conheceu Pousada " + id + " inserido com sucesso.", "Inserir Motivo Conheceu Pousada", JOptionPane.INFORMATION_MESSAGE  );
+        txtCp.setText("");
+    } catch(Exception e){
+        JOptionPane.showMessageDialog(this, e, "ERRO Motivo Conheceu Pousada", JOptionPane.ERROR_MESSAGE);
+    }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**

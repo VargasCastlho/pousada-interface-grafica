@@ -12,7 +12,10 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
+import pousada.dominio.ConheceuPousada;
+import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
+import pousada.dominio.Quarto;
 import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
 
@@ -470,7 +473,10 @@ private String getDateTime() {
     }//GEN-LAST:event_txtDataCheckInActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
-        gerIG.carregarCombo(cbMt, MotivoViagem.class);
+        gerIG.carregarCombo(cbMt, MeioTransporte.class);
+        gerIG.carregarCombo(cbMv, MotivoViagem.class);
+        gerIG.carregarCombo(cbCp, ConheceuPousada.class);
+        gerIG.carregarCombo(cbNq, Quarto.class);
     }//GEN-LAST:event_formComponentShown
 
     /**

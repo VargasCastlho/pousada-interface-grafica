@@ -9,6 +9,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import org.hibernate.HibernateException;
+import pousada.dao.ConexaoHibernate;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 import pousada.interface_grafica.JanelaPrincipal;
 import pousada.interface_grafica.cliente.CadastrarCliente;
 import pousada.interface_grafica.cliente.ConsultarCliente;
@@ -55,7 +57,7 @@ public class GerenciadorInterfaceGrafica {
         gerDominio = GerenciadorDominio.getInstancia();
         janelaPrincipal = new JanelaPrincipal();
         cadastrarCliente = new CadastrarCliente();
-        consultarReserva = new ConsultarReserva();
+        consultarReserva = new ConsultarReserva(this);
         consultarCliente = new ConsultarCliente();
         faturamento = new Faturamento();
         quarDis = new QuarDis();
@@ -146,6 +148,7 @@ public class GerenciadorInterfaceGrafica {
     
     
     public static void main(String[] args) throws InterruptedException {
+        ConexaoHibernate.getSessionFactory();
         GerenciadorInterfaceGrafica gerenciadorInterfaceGrafica = GerenciadorInterfaceGrafica.getInstancia();
         gerenciadorInterfaceGrafica.getJanelaPrincipal();    
     }

@@ -8,11 +8,10 @@ package pousada.interface_grafica.quarto;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
+import org.hibernate.exception.ConstraintViolationException;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 
 /**
  *
@@ -23,11 +22,13 @@ public class CadastrarQuartos extends javax.swing.JFrame {
     /**
      * Creates new form CadastrarQuarto
      */
+    GerenciadorDominio gerDOM = null;
     public CadastrarQuartos() {
         initComponents();
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        gerDOM = GerenciadorDominio.getInstancia();
     }
 
     /**
@@ -155,7 +156,28 @@ public class CadastrarQuartos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-       
+    try {
+        int id = gerDOM.inserirQuarto((int)txtQuarto.getValue(), 
+                (int)txtCama.getValue(), (int)txtArmarios.getValue(), 
+                (int)txtFrigobar.getValue(), 
+                Double.parseDouble(txtDiaria.getText()), txtObs.getText());
+        JOptionPane.showMessageDialog(this, "Quarto " + id + " inserido com sucesso.", "Inserir Quarto", JOptionPane.INFORMATION_MESSAGE  );
+        txtQuarto.setValue(0);
+        txtCama.setValue(0);
+        txtArmarios.setValue(0);
+        txtFrigobar.setValue(0);
+        txtDiaria.setText("");
+        txtObs.setText("");
+    }catch(PersistenceException e){
+        JOptionPane.showMessageDialog(this, "Este quarto já existe", "Aviso", JOptionPane.ERROR_MESSAGE);
+    }catch(NumberFormatException e){
+        if(e.getMessage().contains("empty String"))
+            JOptionPane.showMessageDialog(this, "Campo valor vazio", "Aviso", JOptionPane.ERROR_MESSAGE);
+        else if(e.getMessage().contains("input"))
+            JOptionPane.showMessageDialog(this, "Valor da diária inválido", "Aviso", JOptionPane.ERROR_MESSAGE);
+    }catch(Exception e){
+        JOptionPane.showMessageDialog(this, e, "ERRO Quarto", JOptionPane.ERROR_MESSAGE);
+    }       
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
