@@ -11,11 +11,15 @@ import java.awt.Toolkit;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import pousada.dominio.Cliente;
 import pousada.dominio.ConheceuPousada;
 import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
 import pousada.dominio.Quarto;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
 
@@ -28,6 +32,11 @@ public class CadastrarReserva extends javax.swing.JFrame {
     /** Creates new form CadastrarReserva */
     String id;
     GerenciadorInterfaceGrafica gerIG;
+    GerenciadorDominio gerD = null;
+    List<Cliente> clientes = null;
+//    List<MotivoViagem> motivosViagem = null;
+//    List<MeioTransporte> meiosTransporte = null;
+//    List<ConheceuPousada> listaConheceuPousada = null;
     public CadastrarReserva(GerenciadorInterfaceGrafica gerIG) {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -35,6 +44,7 @@ public class CadastrarReserva extends javax.swing.JFrame {
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
         this.gerIG = gerIG;
+        gerD = gerIG.getGerDominio();
     }
 
 private String getDateTime() {
@@ -215,10 +225,7 @@ private String getDateTime() {
 
         tabCli.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Código", "Nome", "CPF"
@@ -403,6 +410,9 @@ private String getDateTime() {
     try{
         if(txtDataCheckIn.getText().equals("  /  /    ") || txtDataCheckOut.getText().equals("  /  /    ")){
         JOptionPane.showMessageDialog(null, "Campo Data vazio");
+        
+        
+        
     }
         LocalDate dataInicial = LocalDate.parse(txtDataCheckIn.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
@@ -410,6 +420,8 @@ private String getDateTime() {
         txtDataCheckOut.setText("");
         throw new Exception("Data Final é anterior a data Início");   
     }  
+    
+    
     } catch(Exception e){
         JOptionPane.showMessageDialog(null, e.getMessage());
     }
@@ -440,7 +452,7 @@ private String getDateTime() {
     }//GEN-LAST:event_cbCpActionPerformed
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
-
+        txtNome.setText((String)tabCli.getValueAt(tabCli.getSelectedRow(), 1));
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void tabCliMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseEntered
@@ -477,8 +489,30 @@ private String getDateTime() {
         gerIG.carregarCombo(cbMv, MotivoViagem.class);
         gerIG.carregarCombo(cbCp, ConheceuPousada.class);
         gerIG.carregarCombo(cbNq, Quarto.class);
+        
+        clientes = gerD.listar(Cliente.class);
+        adicionarTabela(clientes);
     }//GEN-LAST:event_formComponentShown
 
+    private void adicionarTabela(List<Cliente> clientes){
+        
+        // ADICIONAR LINHA NA TABELA 
+        int rowCount = tabCli.getRowCount();
+        for (int i = 0; i <= rowCount; i++) {
+            if(tabCli.getRowCount()>0)
+                ( (DefaultTableModel) tabCli.getModel() ).removeRow(0);
+        }
+        
+        for(Cliente c : clientes){
+            ( (DefaultTableModel) tabCli.getModel() ).addRow( new Object[3] );
+            int linha = tabCli.getRowCount() - 1;
+            int col = 0;
+            tabCli.setValueAt(c.getIdCliente(), linha , col++);
+            tabCli.setValueAt(c.getNome(), linha , col++);
+            tabCli.setValueAt(c.getCpf(), linha , col++);
+        }
+                
+    }
     /**
      * @param args the command line arguments
      */

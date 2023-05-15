@@ -5,13 +5,18 @@
  */
 package pousada.gerenciador_tarefas;
 
+import com.sun.istack.NotNull;
+import java.time.LocalDate;
 import java.util.List;
+import javax.persistence.Column;
 import org.hibernate.HibernateException;
 import pousada.dao.GenericDAO;
+import pousada.dominio.Cliente;
 import pousada.dominio.ConheceuPousada;
 import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
 import pousada.dominio.Quarto;
+import pousada.dominio.enums.GeneroEnum;
 
 /**
  *
@@ -62,6 +67,18 @@ public class GerenciadorDominio {
                 .valorDiaria(valorDiaria).observacoes(observacoes).build();
         genDAO.inserir(q);
         return q.getNumeroQuarto();
+    }
+    
+    public int inserirCliente(String nome, String celular, String profissao, 
+            String nacionalidade, LocalDate dataNasc, String identidade, String cpf, 
+            String email, String residencia, String cidade, String uf, 
+            String pais, GeneroEnum genero){
+        Cliente c = Cliente.builder().nome(nome).celular(celular).profissao(profissao)
+                .nacionalidade(nacionalidade).dataNasc(dataNasc).identidade(identidade)
+                .cpf(cpf).email(email).residencia(residencia).cidade(cidade).uf(uf)
+                .pais(pais).genero(genero).build();
+        genDAO.inserir(c);
+        return c.getIdCliente();
     }
     
 }

@@ -8,13 +8,10 @@ package pousada.interface_grafica.quarto;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import javax.swing.JOptionPane;
+import java.util.List;
 import javax.swing.table.DefaultTableModel;
+import pousada.dominio.Quarto;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 
 /**
  *
@@ -25,11 +22,14 @@ public class ConsultarQuarto extends javax.swing.JFrame {
     /**
      * Creates new form ConsultarQuarto
      */
+    GerenciadorDominio gerD = null;
+    List<Quarto> quartos = null;
     public ConsultarQuarto() {
         initComponents();
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        gerD = GerenciadorDominio.getInstancia();
     }
 
     /**
@@ -62,6 +62,11 @@ public class ConsultarQuarto extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         txtPesquisa.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
@@ -75,10 +80,7 @@ public class ConsultarQuarto extends javax.swing.JFrame {
 
         tabCli.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null},
-                {null, null},
-                {null, null},
-                {null, null}
+
             },
             new String [] {
                 "Número do Quarto", "Observações"
@@ -241,7 +243,9 @@ public class ConsultarQuarto extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPesquisaKeyReleased
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
-        
+    Quarto quarto = quartos.get(tabCli.getSelectedRow());
+    txtQuarto.setValue(quarto.getNumeroQuarto());
+    
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -252,6 +256,29 @@ public class ConsultarQuarto extends javax.swing.JFrame {
 
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        quartos = gerD.listar(Quarto.class);
+        adicionarTabela(quartos);
+    }//GEN-LAST:event_formComponentShown
+
+    private void adicionarTabela(List<Quarto> quartos){
+        
+        // ADICIONAR LINHA NA TABELA        
+        int rowCount = tabCli.getRowCount();
+        for (int i = 0; i <= rowCount; i++) {
+            if(tabCli.getRowCount()>0)
+                ( (DefaultTableModel) tabCli.getModel() ).removeRow(0);
+        }
+        
+        for(Quarto q : quartos){
+            ( (DefaultTableModel) tabCli.getModel() ).addRow( new Object[2] );
+            int linha = tabCli.getRowCount() - 1;
+            int col = 0;
+            tabCli.setValueAt(q.getNumeroQuarto(), linha , col++);
+            tabCli.setValueAt(q.getObservacoes(), linha , col++);
+        }
+                
+    }
     /**
      * @param args the command line arguments
      */

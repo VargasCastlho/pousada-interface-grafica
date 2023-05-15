@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
+import lombok.Getter;
 import org.hibernate.HibernateException;
 import pousada.dao.ConexaoHibernate;
 import pousada.gerenciador_tarefas.GerenciadorDominio;
@@ -35,7 +36,8 @@ public class GerenciadorInterfaceGrafica {
             instancia = new GerenciadorInterfaceGrafica();
         return instancia;
     }
-   
+    
+    @Getter
     private GerenciadorDominio gerDominio = null;
     private CadastrarCliente cadastrarCliente = null;
     private ConsultarCliente consultarCliente = null;

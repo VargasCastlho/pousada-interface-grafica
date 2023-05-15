@@ -8,7 +8,11 @@ package pousada.interface_grafica.cliente;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.swing.JOptionPane;
+import pousada.dominio.enums.GeneroEnum;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 import pousada.utils.verificaCPF;
 
 /**
@@ -20,12 +24,14 @@ public class CadastrarCliente extends javax.swing.JFrame {
     /**
      * Creates new form CadastrarCliente
      */
+    GerenciadorDominio gerD = null;
     public CadastrarCliente() {
         initComponents();
         this.setLocationRelativeTo(null);
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        gerD = GerenciadorDominio.getInstancia();
     }
 
 
@@ -329,6 +335,25 @@ public class CadastrarCliente extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         
+        try{
+            verificaCampos();
+            
+            GeneroEnum genero = null;
+            if(rbMasculino.isSelected())
+                genero = GeneroEnum.MASCULINO;
+            else if(rbFeminino.isSelected())
+                genero = GeneroEnum.FEMININO;
+
+            int id = gerD.inserirCliente(txtNome.getText(), txtCel.getText(), txtProf.getText(),
+                txtNacio.getText(), LocalDate.parse(txtNasc.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")), 
+                txtRg.getText(), txtCpf.getText(), txtEmail.getText(), 
+                txtEndereco.getText(), txtCdd.getText(), txtUf.getText(), txtPais.getText(), genero);
+            
+            JOptionPane.showMessageDialog(this, "Cliente "+id+" inserido com sucesso", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            limpaCampos();
+        } catch(Exception e){
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO Cliente", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtCpfFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtCpfFocusLost
@@ -339,6 +364,50 @@ public class CadastrarCliente extends javax.swing.JFrame {
 
     }//GEN-LAST:event_txtCpfFocusLost
 
+    private void verificaCampos() throws Exception{
+        if(txtNome.getText().isBlank())
+                throw new Exception("Campo Nome vazio");
+            else if(txtCel.getText().isBlank())
+                throw new Exception("Campo Celular vazio");
+            else if(txtProf.getText().isBlank())
+                throw new Exception("Campo Profissão vazio");
+            else if(txtNacio.getText().isBlank())
+                throw new Exception("Campo Nacionalidade vazio");
+            else if(txtNasc.getText().equals("  /  /    "))
+                throw new Exception("Campo Nascimento vazio");
+            else if(txtRg.getText().isBlank())
+                throw new Exception("Campo Identidade vazio");
+            else if(txtCpf.getText().equals("   .   .   -  "))
+                throw new Exception("Campo CPF vazio");
+            else if(txtEmail.getText().isBlank())
+                throw new Exception("Campo Email vazio");
+            else if(txtEndereco.getText().isBlank())
+                throw new Exception("Campo Endereço vazio");
+            else if(txtCdd.getText().isBlank())
+                throw new Exception("Campo Cidade vazio");
+            else if(txtUf.getText().isBlank())
+                throw new Exception("Campo UF vazio");
+            else if(txtPais.getText().isBlank())
+                throw new Exception("Campo País vazio");
+            else if(!rbMasculino.isSelected()&&!rbFeminino.isSelected())
+                throw new Exception("Gênero não selecionado");
+    }
+    
+    private void limpaCampos(){
+        txtNome.setText("");
+        txtCel.setText("");
+        txtProf.setText("");
+        txtNacio.setText("");
+        txtNasc.setText("");
+        txtRg.setText("");
+        txtCpf.setText("");
+        txtEmail.setText("");
+        txtEndereco.setText(""); txtCdd.setText("");
+        txtUf.setText(""); 
+        txtPais.setText("");
+        rbMasculino.setSelected(false);
+        rbFeminino.setSelected(false);
+    }
     /**
      * @param args the command line arguments
      */
@@ -414,4 +483,5 @@ public class CadastrarCliente extends javax.swing.JFrame {
     private javax.swing.JTextPane txtRg;
     private javax.swing.JTextPane txtUf;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -8,6 +8,10 @@ package pousada.interface_grafica.cliente;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+import pousada.dominio.Cliente;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 
 /**
  *
@@ -18,12 +22,15 @@ public class ConsultarCliente extends javax.swing.JFrame {
     /**
      * Creates new form ConsultarCliente
      */
+    GerenciadorDominio gerD = null;
+    List<Cliente> clientes = null;
     public ConsultarCliente() {
         initComponents();
         this.setLocationRelativeTo(null);
         URL url = this.getClass().getResource("/pousada/interface_grafica/imagens/logo-mobile.png"); 
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
+        gerD = GerenciadorDominio.getInstancia();
     }
 
     /**
@@ -86,6 +93,11 @@ public class ConsultarCliente extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Consultar Cliente");
         setResizable(false);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
 
         buttonGroup2.add(rbFeminino);
         rbFeminino.setText("F");
@@ -136,10 +148,7 @@ public class ConsultarCliente extends javax.swing.JFrame {
 
         tabCli.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null},
-                {null, null, null},
-                {null, null, null},
-                {null, null, null}
+
             },
             new String [] {
                 "Código", "Nome", "Identidade"
@@ -387,11 +396,9 @@ public class ConsultarCliente extends javax.swing.JFrame {
                         .addGap(16, 16, 16)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel11)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel12)
-                                .addComponent(jLabel13)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                    .addComponent(jLabel1))))
+                            .addComponent(jLabel12)
+                            .addComponent(jLabel13)
+                            .addComponent(jLabel1))
                         .addGap(6, 6, 6)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtEnd, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
@@ -418,7 +425,8 @@ public class ConsultarCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton1ActionPerformed
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
-
+        Cliente cliente = clientes.get(tabCli.getSelectedRow());
+        txtNome.setText(cliente.getNome());
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
@@ -446,6 +454,30 @@ public class ConsultarCliente extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_rbMasculinoActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        clientes = gerD.listar(Cliente.class);
+        adicionarTabela(clientes);
+    }//GEN-LAST:event_formComponentShown
+
+    private void adicionarTabela(List<Cliente> clientes){
+        
+        // ADICIONAR LINHA NA TABELA  
+        int rowCount = tabCli.getRowCount();
+        for (int i = 0; i <= rowCount; i++) {
+            if(tabCli.getRowCount()>0)
+                ( (DefaultTableModel) tabCli.getModel() ).removeRow(0);
+        }
+        
+        for(Cliente c : clientes){
+            ( (DefaultTableModel) tabCli.getModel() ).addRow( new Object[3] );
+            int linha = tabCli.getRowCount() - 1;
+            int col = 0;
+            tabCli.setValueAt(c.getIdCliente(), linha , col++);
+            tabCli.setValueAt(c.getNome(), linha , col++);
+            tabCli.setValueAt(c.getCpf(), linha , col++);
+        }
+                
+    }
     /**
      * @param args the command line arguments
      */

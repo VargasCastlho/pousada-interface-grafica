@@ -10,11 +10,16 @@ import java.awt.Toolkit;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+import pousada.dominio.Cliente;
 import pousada.dominio.ConheceuPousada;
 import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
 import pousada.dominio.Quarto;
+import pousada.dominio.Reserva;
+import pousada.gerenciador_tarefas.GerenciadorDominio;
 import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
 /**
@@ -27,6 +32,8 @@ public class ConsultarReserva extends javax.swing.JFrame {
      * Creates new form ConsultarReserva
      */
     GerenciadorInterfaceGrafica gerIG;
+    GerenciadorDominio gerD = null;
+    List<Reserva> reservas = null;
     public ConsultarReserva(GerenciadorInterfaceGrafica gerIG) {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -34,6 +41,7 @@ public class ConsultarReserva extends javax.swing.JFrame {
         Image iconeTitulo = Toolkit.getDefaultToolkit().getImage(url); 
         this.setIconImage(iconeTitulo);
         this.gerIG = gerIG;
+        this.gerD = gerIG.getGerDominio();
     }
 
     /**
@@ -148,10 +156,7 @@ public class ConsultarReserva extends javax.swing.JFrame {
 
         tabCli.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Código", "Data de Check-in", "Nome", "CPF"
@@ -579,7 +584,7 @@ public class ConsultarReserva extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
-
+        txtNome.setText((String)tabCli.getValueAt(tabCli.getSelectedRow(), 2));
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
@@ -592,8 +597,31 @@ public class ConsultarReserva extends javax.swing.JFrame {
         gerIG.carregarCombo(cbMv, MotivoViagem.class);
         gerIG.carregarCombo(cbCp, ConheceuPousada.class);
         gerIG.carregarCombo(cbNq, Quarto.class);
+        
+        reservas = gerD.listar(Reserva.class);
+        adicionarTabela(reservas);
     }//GEN-LAST:event_formComponentShown
 
+    private void adicionarTabela(List<Reserva> reservas){
+        
+        // ADICIONAR LINHA NA TABELA        
+        int rowCount = tabCli.getRowCount();
+        for (int i = 0; i <= rowCount; i++) {
+            if(tabCli.getRowCount()>0)
+                ( (DefaultTableModel) tabCli.getModel() ).removeRow(0);
+        }
+        
+        for(Reserva r : reservas){
+            ( (DefaultTableModel) tabCli.getModel() ).addRow( new Object[4] );
+            int linha = tabCli.getRowCount() - 1;
+            int col = 0;
+            tabCli.setValueAt(r.getIdReserva(), linha , col++);
+            tabCli.setValueAt(r.getDataCheckIn(), linha , col++);
+            tabCli.setValueAt(r.getCliente().getNome(), linha , col++);
+            tabCli.setValueAt(r.getCliente().getCpf(), linha , col++);
+        }
+                
+    }
     /**
      * @param args the command line arguments
      */
