@@ -48,5 +48,12 @@ public class Cliente implements Serializable {
     
     @OneToMany(mappedBy = "cliente")
     private List<Reserva> reservas;
+
+    @Override
+    public String toString() {
+        return nome;
+    }
+    
+    
     
 }

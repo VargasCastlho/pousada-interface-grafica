@@ -23,6 +23,7 @@ import pousada.dominio.enums.GeneroEnum;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Reserva implements Serializable {
     
     @Id

@@ -16,6 +16,8 @@ import pousada.dominio.ConheceuPousada;
 import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
 import pousada.dominio.Quarto;
+import pousada.dominio.Reserva;
+import pousada.dominio.enums.FormaPagamentoEnum;
 import pousada.dominio.enums.GeneroEnum;
 
 /**
@@ -79,6 +81,23 @@ public class GerenciadorDominio {
                 .pais(pais).genero(genero).build();
         genDAO.inserir(c);
         return c.getIdCliente();
+    }
+    
+    public int inserirReserva(LocalDate dataCheckIn, 
+            LocalDate dataCheckOut, Double valorReserva, Double depositoRealizado, 
+            String placaCarro, Double pagamentoCheckIn, 
+            FormaPagamentoEnum formaPagamento, MeioTransporte meioTransporte, 
+            ConheceuPousada conheceuPousada, MotivoViagem motivoViagem, 
+            Quarto quarto, Cliente cliente){
+        Reserva r = Reserva.builder().dataCheckIn(dataCheckIn)
+                .dataCheckOut(dataCheckOut).valorReserva(valorReserva)
+                .depositoRealizado(depositoRealizado).placaCarro(placaCarro)
+                .pagamentoCheckIn(pagamentoCheckIn).formaPagamento(formaPagamento)
+                .meioTransporte(meioTransporte).conheceuPousada(conheceuPousada)
+                .motivoViagem(motivoViagem).quarto(quarto).cliente(cliente).build();
+        
+        genDAO.inserir(r);
+        return r.getIdReserva();
     }
     
 }

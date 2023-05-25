@@ -11,6 +11,7 @@ import java.awt.Toolkit;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -19,6 +20,7 @@ import pousada.dominio.ConheceuPousada;
 import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
 import pousada.dominio.Quarto;
+import pousada.dominio.enums.FormaPagamentoEnum;
 import pousada.gerenciador_tarefas.GerenciadorDominio;
 import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
@@ -34,9 +36,6 @@ public class CadastrarReserva extends javax.swing.JFrame {
     GerenciadorInterfaceGrafica gerIG;
     GerenciadorDominio gerD = null;
     List<Cliente> clientes = null;
-//    List<MotivoViagem> motivosViagem = null;
-//    List<MeioTransporte> meiosTransporte = null;
-//    List<ConheceuPousada> listaConheceuPousada = null;
     public CadastrarReserva(GerenciadorInterfaceGrafica gerIG) {
         initComponents();
         this.setLocationRelativeTo(null);
@@ -128,7 +127,7 @@ private String getDateTime() {
             }
         });
 
-        jLabel3.setText("N¬∫ Quarto");
+        jLabel3.setText("N∫ Quarto");
 
         cbMv.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -137,25 +136,28 @@ private String getDateTime() {
         });
 
         buttonGroup1.add(rbTransfBanc);
-        rbTransfBanc.setText("Transferencia Banc√°ria");
+        rbTransfBanc.setText("Transferencia Banc·ria");
 
         jLabel16.setText("Placa do carro");
 
-        lTexto.setText("Digite o nome do h√≥spede: ");
+        lTexto.setText("Digite o nome do hÛspede: ");
 
         txtNome.setEnabled(false);
         jScrollPane2.setViewportView(txtNome);
+
+        txtReserva.setEditable(false);
 
         jLabel19.setText("Como conhceu a pousada?");
 
         jLabel17.setText("Data Check in");
 
-        jLabel21.setText("Dep√≥sito realizado");
+        jLabel21.setText("DepÛsito realizado");
 
         jLabel22.setText("Pagamento Check in");
 
         jLabel14.setText("Motivo da Viagem");
 
+        in.setEditable(false);
         jScrollPane15.setViewportView(in);
 
         txtDeposito.addFocusListener(new java.awt.event.FocusAdapter() {
@@ -221,14 +223,14 @@ private String getDateTime() {
         }
 
         buttonGroup1.add(rbCartaoDebito);
-        rbCartaoDebito.setText("Cart√£o de D√©bito");
+        rbCartaoDebito.setText("Cart„o de DÈbito");
 
         tabCli.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "C√≥digo", "Nome", "CPF"
+                "CÛdigo", "Nome", "CPF"
             }
         ) {
             Class[] types = new Class [] {
@@ -408,25 +410,66 @@ private String getDateTime() {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     try{
-        if(txtDataCheckIn.getText().equals("  /  /    ") || txtDataCheckOut.getText().equals("  /  /    ")){
-        JOptionPane.showMessageDialog(null, "Campo Data vazio");
+        verificaCampos();
         
-        
-        
-    }
+        FormaPagamentoEnum formaPagamentoEnum = null;
+        if(rbCartaoDebito.isSelected())
+            formaPagamentoEnum = FormaPagamentoEnum.CARTAO_DE_DEBITO;
+        else if(rbDinheiro.isSelected())
+            formaPagamentoEnum = FormaPagamentoEnum.DINHEIRO;
+        else if(rbTransfBanc.isSelected())
+            formaPagamentoEnum = FormaPagamentoEnum.TRANSFERENCIA_BANCARIA;
         LocalDate dataInicial = LocalDate.parse(txtDataCheckIn.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
-    if(dataFinal.isBefore(dataInicial)){
-        txtDataCheckOut.setText("");
-        throw new Exception("Data Final √© anterior a data In√≠cio");   
-    }  
+        LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
+        System.out.println((Cliente)tabCli.getValueAt(tabCli.getSelectedRow(), 1));
+        int id = gerD.inserirReserva(dataInicial, dataFinal, 
+                Double.parseDouble(txtReserva.getText()), Double.parseDouble(txtDeposito.getText()), 
+                txtCarro.getText(), Double.parseDouble(in.getText()), formaPagamentoEnum, 
+                (MeioTransporte)cbMt.getSelectedItem(), 
+                (ConheceuPousada)cbCp.getSelectedItem(), (MotivoViagem)cbMv.getSelectedItem(),
+                (Quarto)cbNq.getSelectedItem(), (Cliente)tabCli.getValueAt(tabCli.getSelectedRow(), 1));
     
-    
+        JOptionPane.showMessageDialog(this, "Reserva "+id+" inserida com sucesso", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        limpaCampos();
     } catch(Exception e){
         JOptionPane.showMessageDialog(null, e.getMessage());
     }
     }//GEN-LAST:event_jButton2ActionPerformed
 
+    private void limpaCampos(){
+        txtNome.setText("");
+        cbCp.setSelectedIndex(0);
+        cbMt.setSelectedIndex(0);
+        cbMv.setSelectedIndex(0);
+        cbNq.setSelectedIndex(0);
+        txtDataCheckIn.setText("");
+        txtDataCheckOut.setText("");
+        txtReserva.setText("");
+        txtDeposito.setText("");
+        txtCarro.setText("");
+        in.setText("");
+        rbDinheiro.setSelected(false);
+        rbCartaoDebito.setSelected(false);
+        rbTransfBanc.setSelected(false);
+    }
+    
+    private void verificaCampos() throws Exception{
+        if(txtDataCheckIn.getText().equals("  /  /    ") || txtDataCheckOut.getText().equals("  /  /    "))
+            throw new Exception("Campo Data vazio");
+        LocalDate dataInicial = LocalDate.parse(txtDataCheckIn.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
+        if(dataFinal.isBefore(dataInicial)){
+            txtDataCheckOut.setText("");
+            throw new Exception("Data Final √© anterior a data In√≠cio");   
+        }
+        if(txtReserva.getText().isBlank())
+            throw new Exception("Campo Valor Reserva Vazio");
+        if(txtDeposito.getText().isBlank())
+            throw new Exception("Campo DepÛsito Vazio");
+        else if(!rbDinheiro.isSelected()&&!rbTransfBanc.isSelected()&&!rbCartaoDebito.isSelected())
+                throw new Exception("MÈtodo de Pagamento n„o Selecionado");
+    }
+    
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
     
     }//GEN-LAST:event_formWindowOpened
@@ -436,7 +479,9 @@ private String getDateTime() {
     }//GEN-LAST:event_cbMvActionPerformed
 
     private void txtDepositoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDepositoFocusLost
-        
+        Double pagamentoCheckIn = Double.parseDouble(txtReserva.getText()) - 
+                Double.parseDouble(txtDeposito.getText());
+        in.setText(String.valueOf(pagamentoCheckIn));
     }//GEN-LAST:event_txtDepositoFocusLost
 
     private void cbNqActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbNqActionPerformed
@@ -452,7 +497,7 @@ private String getDateTime() {
     }//GEN-LAST:event_cbCpActionPerformed
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
-        txtNome.setText((String)tabCli.getValueAt(tabCli.getSelectedRow(), 1));
+        txtNome.setText(String.valueOf(tabCli.getValueAt(tabCli.getSelectedRow(), 1)));
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void tabCliMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseEntered
@@ -477,7 +522,15 @@ private String getDateTime() {
     }//GEN-LAST:event_txtDataCheckOutFocusLost
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-  
+        LocalDate checkOut = LocalDate.parse(txtDataCheckOut.getText(), 
+                DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        LocalDate checkIn = LocalDate.parse(txtDataCheckIn.getText(), 
+                DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        
+        long dias = checkIn.until(checkOut, ChronoUnit.DAYS);
+        Quarto quartoSelecionado = (Quarto)cbNq.getSelectedItem();
+        txtReserva.setText(String.valueOf((dias*quartoSelecionado.getValorDiaria())));
+        
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void txtDataCheckInActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDataCheckInActionPerformed
@@ -508,7 +561,7 @@ private String getDateTime() {
             int linha = tabCli.getRowCount() - 1;
             int col = 0;
             tabCli.setValueAt(c.getIdCliente(), linha , col++);
-            tabCli.setValueAt(c.getNome(), linha , col++);
+            tabCli.setValueAt(c, linha , col++);
             tabCli.setValueAt(c.getCpf(), linha , col++);
         }
                 
