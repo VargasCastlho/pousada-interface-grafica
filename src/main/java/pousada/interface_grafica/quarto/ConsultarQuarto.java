@@ -9,6 +9,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
 import java.util.List;
+import javax.persistence.PersistenceException;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import pousada.dominio.Quarto;
 import pousada.gerenciador_tarefas.GerenciadorDominio;
@@ -245,15 +247,60 @@ public class ConsultarQuarto extends javax.swing.JFrame {
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
     Quarto quarto = quartos.get(tabCli.getSelectedRow());
     txtQuarto.setValue(quarto.getNumeroQuarto());
-    
+    txtCama.setValue(quarto.getNumeroCamas());
+    txtArmarios.setValue(quarto.getNumeroArmarios());
+    txtFrigobar.setValue(quarto.getNumeroFrigobares());
+    txtDiaria.setText(quarto.getValorDiaria().toString());
+    txtObs.setText(quarto.getObservacoes());
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        
+    try {
+        int id = gerD.alterarQuarto((int)txtQuarto.getValue(), 
+                (int)txtCama.getValue(), (int)txtArmarios.getValue(), 
+                (int)txtFrigobar.getValue(), 
+                Double.parseDouble(txtDiaria.getText()), txtObs.getText());
+        JOptionPane.showMessageDialog(this, "Quarto " + id + " alterado com sucesso.", "Alterar Quarto", JOptionPane.INFORMATION_MESSAGE  );
+        txtQuarto.setValue(0);
+        txtCama.setValue(0);
+        txtArmarios.setValue(0);
+        txtFrigobar.setValue(0);
+        txtDiaria.setText("");
+        txtObs.setText("");
+        formComponentShown(null);
+    }catch(PersistenceException e){
+        JOptionPane.showMessageDialog(this, "Este quarto já existe", "Aviso", JOptionPane.ERROR_MESSAGE);
+    }catch(NumberFormatException e){
+        if(e.getMessage().contains("empty String"))
+            JOptionPane.showMessageDialog(this, "Campo valor vazio", "Aviso", JOptionPane.ERROR_MESSAGE);
+        else if(e.getMessage().contains("input"))
+            JOptionPane.showMessageDialog(this, "Valor da diária inválido", "Aviso", JOptionPane.ERROR_MESSAGE);
+    }catch(Exception e){
+        JOptionPane.showMessageDialog(this, e, "ERRO Quarto", JOptionPane.ERROR_MESSAGE);
+    }  
     }//GEN-LAST:event_jButton1ActionPerformed
-
+    
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-
+        try {
+        gerD.excluir(quartos.get(tabCli.getSelectedRow()));
+        JOptionPane.showMessageDialog(this, "Quarto " + txtQuarto.getValue() + " excluido com sucesso.", "Excluir Quarto", JOptionPane.INFORMATION_MESSAGE  );
+        txtQuarto.setValue(0);
+        txtCama.setValue(0);
+        txtArmarios.setValue(0);
+        txtFrigobar.setValue(0);
+        txtDiaria.setText("");
+        txtObs.setText("");
+        formComponentShown(null);
+    }catch(PersistenceException e){
+        JOptionPane.showMessageDialog(this, "Este quarto já existe", "Aviso", JOptionPane.ERROR_MESSAGE);
+    }catch(NumberFormatException e){
+        if(e.getMessage().contains("empty String"))
+            JOptionPane.showMessageDialog(this, "Campo valor vazio", "Aviso", JOptionPane.ERROR_MESSAGE);
+        else if(e.getMessage().contains("input"))
+            JOptionPane.showMessageDialog(this, "Valor da diária inválido", "Aviso", JOptionPane.ERROR_MESSAGE);
+    }catch(Exception e){
+        JOptionPane.showMessageDialog(this, e, "ERRO Quarto", JOptionPane.ERROR_MESSAGE);
+    } 
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown

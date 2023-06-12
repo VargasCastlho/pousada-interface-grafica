@@ -10,7 +10,6 @@ import java.awt.Toolkit;
 import java.net.URL;
 import javax.persistence.PersistenceException;
 import javax.swing.JOptionPane;
-import org.hibernate.exception.ConstraintViolationException;
 import pousada.gerenciador_tarefas.GerenciadorDominio;
 
 /**

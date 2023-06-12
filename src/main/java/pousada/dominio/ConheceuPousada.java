@@ -5,6 +5,7 @@
  */
 package pousada.dominio;
 
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -39,4 +40,24 @@ public class ConheceuPousada {
     public String toString() {
         return descricao;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ConheceuPousada other = (ConheceuPousada) obj;
+        if (this.idConheceuPousada != other.idConheceuPousada) {
+            return false;
+        }
+        return Objects.equals(this.descricao, other.descricao);
+    }
+    
+    
 }

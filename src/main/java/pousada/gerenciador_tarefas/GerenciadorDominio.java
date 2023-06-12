@@ -5,10 +5,8 @@
  */
 package pousada.gerenciador_tarefas;
 
-import com.sun.istack.NotNull;
 import java.time.LocalDate;
 import java.util.List;
-import javax.persistence.Column;
 import org.hibernate.HibernateException;
 import pousada.dao.GenericDAO;
 import pousada.dominio.Cliente;
@@ -50,9 +48,22 @@ public class GerenciadorDominio {
         return mV.getIdMotivoViagem();
     }
     
+    public void alterarMotivoViagem(int idMotivoViagem, String descricao){
+        MotivoViagem mV = MotivoViagem.builder().idMotivoViagem(idMotivoViagem)
+                .descricao(descricao).build();
+        genDAO.alterar(mV);
+    }
+    
     public int inserirMeioTransporte(String descricao){
         MeioTransporte mT = MeioTransporte.builder().descricao(descricao).build();
         genDAO.inserir(mT);
+        return mT.getIdMeioTransporte();
+    }
+    
+    public int alterarMeioTransporte(int idMeioTransporte, String descricao){
+        MeioTransporte mT = MeioTransporte.builder().idMeioTransporte(idMeioTransporte)
+                .descricao(descricao).build();
+        genDAO.alterar(mT);
         return mT.getIdMeioTransporte();
     }
     
@@ -62,12 +73,28 @@ public class GerenciadorDominio {
         return cP.getIdConheceuPousada();
     }
     
+    public int alterarConheceuPousada(int idConheceuPousada, String descricao){
+        ConheceuPousada cP = ConheceuPousada.builder().idConheceuPousada(idConheceuPousada)
+                .descricao(descricao).build();
+        genDAO.alterar(cP);
+        return cP.getIdConheceuPousada();
+    }
+    
     public int inserirQuarto(int numeroQuarto, int numeroCamas, int numeroArmarios, int numeroFrigobares, Double valorDiaria, String observacoes){
         Quarto q = Quarto.builder().numeroQuarto(numeroQuarto)
                 .numeroCamas(numeroCamas).numeroArmarios(numeroArmarios)
                 .numeroFrigobares(numeroFrigobares)
                 .valorDiaria(valorDiaria).observacoes(observacoes).build();
         genDAO.inserir(q);
+        return q.getNumeroQuarto();
+    }
+    
+    public int alterarQuarto(int numeroQuarto, int numeroCamas, int numeroArmarios, int numeroFrigobares, Double valorDiaria, String observacoes){
+        Quarto q = Quarto.builder().numeroQuarto(numeroQuarto)
+                .numeroCamas(numeroCamas).numeroArmarios(numeroArmarios)
+                .numeroFrigobares(numeroFrigobares)
+                .valorDiaria(valorDiaria).observacoes(observacoes).build();
+        genDAO.alterar(q);
         return q.getNumeroQuarto();
     }
     
@@ -81,6 +108,17 @@ public class GerenciadorDominio {
                 .pais(pais).genero(genero).build();
         genDAO.inserir(c);
         return c.getIdCliente();
+    }
+    
+    public void alterarCliente (int idCliente, String nome, String celular, String profissao, 
+            String nacionalidade, LocalDate dataNasc, String identidade, String cpf, 
+            String email, String residencia, String cidade, String uf, 
+            String pais, GeneroEnum genero){
+        Cliente c = Cliente.builder().idCliente(idCliente).nome(nome).celular(celular).profissao(profissao)
+                .nacionalidade(nacionalidade).dataNasc(dataNasc).identidade(identidade)
+                .cpf(cpf).email(email).residencia(residencia).cidade(cidade).uf(uf)
+                .pais(pais).genero(genero).build();
+        genDAO.alterar(c);
     }
     
     public int inserirReserva(LocalDate dataCheckIn, 
@@ -99,5 +137,28 @@ public class GerenciadorDominio {
         genDAO.inserir(r);
         return r.getIdReserva();
     }
+    
+    public int alterarReserva(int idReserva, LocalDate dataCheckIn, 
+            LocalDate dataCheckOut, Double valorReserva, Double depositoRealizado, 
+            String placaCarro, Double pagamentoCheckIn, 
+            FormaPagamentoEnum formaPagamento, MeioTransporte meioTransporte, 
+            ConheceuPousada conheceuPousada, MotivoViagem motivoViagem, 
+            Quarto quarto, Cliente cliente){
+        Reserva r = Reserva.builder().idReserva(idReserva).dataCheckIn(dataCheckIn)
+                .dataCheckOut(dataCheckOut).valorReserva(valorReserva)
+                .depositoRealizado(depositoRealizado).placaCarro(placaCarro)
+                .pagamentoCheckIn(pagamentoCheckIn).formaPagamento(formaPagamento)
+                .meioTransporte(meioTransporte).conheceuPousada(conheceuPousada)
+                .motivoViagem(motivoViagem).quarto(quarto).cliente(cliente).build();
+        
+        genDAO.alterar(r);
+        return r.getIdReserva();
+    }
+    
+    public void excluir (Object obj) throws HibernateException {
+        genDAO.excluir(obj);
+    }
+    
+     
     
 }

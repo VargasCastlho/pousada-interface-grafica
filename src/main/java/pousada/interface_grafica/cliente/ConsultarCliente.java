@@ -8,9 +8,13 @@ package pousada.interface_grafica.cliente;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import pousada.dominio.Cliente;
+import pousada.dominio.enums.GeneroEnum;
 import pousada.gerenciador_tarefas.GerenciadorDominio;
 
 /**
@@ -427,6 +431,23 @@ public class ConsultarCliente extends javax.swing.JFrame {
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
         Cliente cliente = clientes.get(tabCli.getSelectedRow());
         txtNome.setText(cliente.getNome());
+        txtCel.setText(cliente.getCelular());
+        txtProf.setText(cliente.getProfissao());
+        txtNacio.setText(cliente.getNacionalidade());
+        txtNasc.setText(cliente.getDataNasc().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        txtRg.setText(cliente.getIdentidade());
+        txtCpf.setText(cliente.getCpf());
+        txtEmail.setText(cliente.getEmail());
+        txtEndereco.setText(cliente.getResidencia());
+        txtUf.setText(cliente.getUf());
+        txtCdd.setText(cliente.getCidade());
+        txtPais.setText(cliente.getPais());
+        
+        if(cliente.getGenero()==GeneroEnum.FEMININO)
+            rbFeminino.setSelected(true);
+        else
+            rbMasculino.setSelected(true);
+        
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void jRadioButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton2ActionPerformed
@@ -435,7 +456,26 @@ public class ConsultarCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_jRadioButton2ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-       
+        try{
+            verificaCampos();
+            
+            GeneroEnum genero = null;
+            if(rbMasculino.isSelected())
+                genero = GeneroEnum.MASCULINO;
+            else if(rbFeminino.isSelected())
+                genero = GeneroEnum.FEMININO;
+
+            gerD.alterarCliente(clientes.get(tabCli.getSelectedRow()).getIdCliente(), txtNome.getText(), txtCel.getText(), txtProf.getText(),
+                txtNacio.getText(), LocalDate.parse(txtNasc.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")), 
+                txtRg.getText(), txtCpf.getText(), txtEmail.getText(), 
+                txtEndereco.getText(), txtCdd.getText(), txtUf.getText(), txtPais.getText(), genero);
+            
+            JOptionPane.showMessageDialog(this, "Cliente "+txtNome.getText()+" alterado com sucesso", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+            limpaCampos();
+            formComponentShown(null);
+        } catch(Exception e){
+            JOptionPane.showMessageDialog(this, e.getMessage(), "ERRO Cliente", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void txtPesquisaKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtPesquisaKeyReleased
@@ -443,9 +483,57 @@ public class ConsultarCliente extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPesquisaKeyReleased
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-       
+       Cliente cliente = clientes.get(tabCli.getSelectedRow());
+       String nome = cliente.getNome();
+       gerD.excluir(cliente);
+       formComponentShown(null);
+       limpaCampos();
+       JOptionPane.showMessageDialog(this, "Cliente "+nome+" excluido com sucesso", "Aviso", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_jButton3ActionPerformed
-
+    private void verificaCampos() throws Exception{
+        if(txtNome.getText().isBlank())
+                throw new Exception("Campo Nome vazio");
+            else if(txtCel.getText().isBlank())
+                throw new Exception("Campo Celular vazio");
+            else if(txtProf.getText().isBlank())
+                throw new Exception("Campo Profissão vazio");
+            else if(txtNacio.getText().isBlank())
+                throw new Exception("Campo Nacionalidade vazio");
+            else if(txtNasc.getText().equals("  /  /    "))
+                throw new Exception("Campo Nascimento vazio");
+            else if(txtRg.getText().isBlank())
+                throw new Exception("Campo Identidade vazio");
+            else if(txtCpf.getText().equals("   .   .   -  "))
+                throw new Exception("Campo CPF vazio");
+            else if(txtEmail.getText().isBlank())
+                throw new Exception("Campo Email vazio");
+            else if(txtEndereco.getText().isBlank())
+                throw new Exception("Campo Endereço vazio");
+            else if(txtCdd.getText().isBlank())
+                throw new Exception("Campo Cidade vazio");
+            else if(txtUf.getText().isBlank())
+                throw new Exception("Campo UF vazio");
+            else if(txtPais.getText().isBlank())
+                throw new Exception("Campo País vazio");
+            else if(!rbMasculino.isSelected()&&!rbFeminino.isSelected())
+                throw new Exception("Gênero não selecionado");
+    }
+    
+    private void limpaCampos(){
+        txtNome.setText("");
+        txtCel.setText("");
+        txtProf.setText("");
+        txtNacio.setText("");
+        txtNasc.setText("");
+        txtRg.setText("");
+        txtCpf.setText("");
+        txtEmail.setText("");
+        txtEndereco.setText(""); txtCdd.setText("");
+        txtUf.setText(""); 
+        txtPais.setText("");
+        rbMasculino.setSelected(false);
+        rbFeminino.setSelected(false);
+    }
     private void txtCpfActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCpfActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtCpfActionPerformed

@@ -6,6 +6,7 @@
 package pousada.dominio;
 
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -48,4 +49,24 @@ public class Quarto {
     public String toString() {
         return Integer.toString(numeroQuarto);
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Quarto other = (Quarto) obj;
+        if (this.numeroQuarto != other.numeroQuarto) {
+            return false;
+        }
+        return Objects.equals(this.reservas, other.reservas);
+    }
+    
+    
 }

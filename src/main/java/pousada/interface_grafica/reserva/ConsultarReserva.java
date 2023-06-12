@@ -19,6 +19,8 @@ import pousada.dominio.MeioTransporte;
 import pousada.dominio.MotivoViagem;
 import pousada.dominio.Quarto;
 import pousada.dominio.Reserva;
+import pousada.dominio.enums.FormaPagamentoEnum;
+import pousada.dominio.enums.GeneroEnum;
 import pousada.gerenciador_tarefas.GerenciadorDominio;
 import pousada.gerenciador_tarefas.GerenciadorInterfaceGrafica;
 
@@ -507,15 +509,27 @@ public class ConsultarReserva extends javax.swing.JFrame {
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
     try{
-        if(txtDataCheckIn.getText().equals("  /  /    ") || txtDataCheckOut.getText().equals("  /  /    ")){
-        JOptionPane.showMessageDialog(null, "Campo Data vazio");
-    }
+        verificaCampos();
+        
+        FormaPagamentoEnum formaPagamentoEnum = null;
+        if(rbCartaoDebito.isSelected())
+            formaPagamentoEnum = FormaPagamentoEnum.CARTAO_DE_DEBITO;
+        else if(rbDinheiro.isSelected())
+            formaPagamentoEnum = FormaPagamentoEnum.DINHEIRO;
+        else if(rbTransfBanc.isSelected())
+            formaPagamentoEnum = FormaPagamentoEnum.TRANSFERENCIA_BANCARIA;
         LocalDate dataInicial = LocalDate.parse(txtDataCheckIn.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-    LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
-    if(dataFinal.isBefore(dataInicial)){
-        txtDataCheckOut.setText("");
-        throw new Exception("Data Final é anterior a data Início");   
-    }  
+        LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
+        int id = gerD.alterarReserva(reservas.get(tabCli.getSelectedRow()).getIdReserva(), dataInicial, dataFinal, 
+                Double.parseDouble(txtReserva.getText()), Double.parseDouble(txtDeposito.getText()), 
+                txtCarro.getText(), Double.parseDouble(in.getText()), formaPagamentoEnum, 
+                (MeioTransporte)cbMt.getSelectedItem(), 
+                (ConheceuPousada)cbCp.getSelectedItem(), (MotivoViagem)cbMv.getSelectedItem(),
+                (Quarto)cbNq.getSelectedItem(), (Cliente)tabCli.getValueAt(tabCli.getSelectedRow(), 2));
+    
+        JOptionPane.showMessageDialog(this, "Reserva "+id+" alterada com sucesso", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        limpaCampos();
+        formComponentShown(null);
     } catch(Exception e){
         JOptionPane.showMessageDialog(null, e.getMessage());
     }
@@ -530,9 +544,47 @@ public class ConsultarReserva extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPesquisaKeyTyped
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-
+        Reserva reserva = reservas.get(tabCli.getSelectedRow());
+        gerD.excluir(reserva);
+        JOptionPane.showMessageDialog(this, "Reserva " + reserva.getIdReserva() + " excluida com sucesso.", "Excluir Reserva", JOptionPane.INFORMATION_MESSAGE  );
+        limpaCampos();
+        formComponentShown(null);
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void limpaCampos(){
+        txtNome.setText("");
+        cbCp.setSelectedIndex(0);
+        cbMt.setSelectedIndex(0);
+        cbMv.setSelectedIndex(0);
+        cbNq.setSelectedIndex(0);
+        txtDataCheckIn.setText("");
+        txtDataCheckOut.setText("");
+        txtReserva.setText("");
+        txtDeposito.setText("");
+        txtCarro.setText("");
+        in.setText("");
+        rbDinheiro.setSelected(false);
+        rbCartaoDebito.setSelected(false);
+        rbTransfBanc.setSelected(false);
+    }
+    
+    private void verificaCampos() throws Exception{
+        if(txtDataCheckIn.getText().equals("  /  /    ") || txtDataCheckOut.getText().equals("  /  /    "))
+            throw new Exception("Campo Data vazio");
+        LocalDate dataInicial = LocalDate.parse(txtDataCheckIn.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        LocalDate dataFinal = LocalDate.parse(txtDataCheckOut.getText(), DateTimeFormatter.ofPattern("dd/MM/yyyy")); 
+        if(dataFinal.isBefore(dataInicial)){
+            txtDataCheckOut.setText("");
+            throw new Exception("Data Final é anterior a data Início");   
+        }
+        if(txtReserva.getText().isBlank())
+            throw new Exception("Campo Valor Reserva Vazio");
+        if(txtDeposito.getText().isBlank())
+            throw new Exception("Campo Dep�sito Vazio");
+        else if(!rbDinheiro.isSelected()&&!rbTransfBanc.isSelected()&&!rbCartaoDebito.isSelected())
+                throw new Exception("M�todo de Pagamento n�o Selecionado");
+    }
+    
     private void txtDepositoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtDepositoFocusLost
        
     }//GEN-LAST:event_txtDepositoFocusLost
@@ -584,7 +636,30 @@ public class ConsultarReserva extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void tabCliMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabCliMouseClicked
-        txtNome.setText((String)tabCli.getValueAt(tabCli.getSelectedRow(), 2));
+        Reserva reserva = reservas.get(tabCli.getSelectedRow());
+        txtNome.setText(reserva.getCliente().getNome());
+        cbMv.setSelectedItem(reserva.getMotivoViagem());
+        cbMt.setSelectedItem(reserva.getMeioTransporte());
+        cbCp.setSelectedItem(reserva.getConheceuPousada());
+        cbNq.setSelectedItem(reserva.getQuarto());
+        txtDataCheckIn.setText(reserva.getDataCheckIn().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        txtDataCheckOut.setText(reserva.getDataCheckOut().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        txtReserva.setText(reserva.getValorReserva().toString());
+        txtDeposito.setText(reserva.getDepositoRealizado().toString());
+        txtCarro.setText(reserva.getPlacaCarro());
+        in.setText(reserva.getPagamentoCheckIn().toString());
+        
+        switch (reserva.getFormaPagamento()) {
+            case DINHEIRO:
+                rbDinheiro.setSelected(true);
+                break;
+            case CARTAO_DE_DEBITO:
+                rbCartaoDebito.setSelected(true);
+                break;
+            case TRANSFERENCIA_BANCARIA:
+                rbTransfBanc.setSelected(true);
+                break;
+        }
     }//GEN-LAST:event_tabCliMouseClicked
 
     private void jRadioButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jRadioButton1ActionPerformed
@@ -617,7 +692,7 @@ public class ConsultarReserva extends javax.swing.JFrame {
             int col = 0;
             tabCli.setValueAt(r.getIdReserva(), linha , col++);
             tabCli.setValueAt(r.getDataCheckIn(), linha , col++);
-            tabCli.setValueAt(r.getCliente().getNome(), linha , col++);
+            tabCli.setValueAt(r.getCliente(), linha , col++);
             tabCli.setValueAt(r.getCliente().getCpf(), linha , col++);
         }
                 
